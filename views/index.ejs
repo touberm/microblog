@@ -68,7 +68,7 @@
               <div class="col-lg-6">
                 <h1>欢迎！</h1>
                 <p>MicroBolg是用node.js搭建的留言系统，欢迎注册使用。</p>
-                <button class="btn btn-primary">注册</button>
+                <a href="/regist" class="btn btn-primary">注册</a>
               </div>
               <div class="col-lg-6">
                 <form>
@@ -122,12 +122,19 @@
           return;
         } else {
           let amount = Math.ceil(parseInt(data) / 10); //获取分页页数
+          console.log(amount);
           let html = '';
-          for (var i = 1; i <= amount; i++) {
-            html += ' <li class="pageNum"><a href="javascript:void(0);">' + i + '</a></li>'
+          if (amount == 1 || amount == 0) {
+            $('#pageContainer').hide();
+            return; //只有一页时不显示分页 amount==0 为没有数据的时候
+          } else {
+            for (var i = 1; i <= amount; i++) {
+              html += ' <li class="pageNum"><a href="javascript:void(0);">' + i + '</a></li>'
+            }
+            $(html).insertAfter($('#pagePrev')); // 将html插入页面
+            $(".pageNum:first").addClass("active"); //给第一个添加class
           }
-          $(html).insertAfter($('#pagePrev')); // 将html插入页面
-          $(".pageNum:first").addClass("active"); //给第一个添加class
+
         }
       })
 
@@ -135,25 +142,27 @@
       $(document).on('click', '.pageNum', (e) => {
         let that = e.target;
         let index = $('.pageNum a').index(that); //获取点击的页面
-        getBlog(index+1);   //ajax切换数据
+        getBlog(index + 1); //ajax切换数据
         $('.pageNum').removeClass('active').eq(index).addClass('active');
 
       })
     </script>
     <style>
-    #showAllBlog{
-      min-height: 1950px;
-    }
-    #showAllBlog .unit{
-      min-height: 185px;
-      margin-bottom: 10px;
-      background-color: #f9f9f9;
-      border-radius: 6px;
-    }
-    #showAllBlog .time{
-      font-size: 12px;
-      color:#ccc;
-    }
+      #showAllBlog {
+        min-height: 1950px;
+      }
+
+      #showAllBlog .unit {
+        min-height: 185px;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+        border-radius: 6px;
+      }
+
+      #showAllBlog .time {
+        font-size: 12px;
+        color: #ccc;
+      }
     </style>
     <div class="container">
       <!-- Example row of columns -->
@@ -173,13 +182,12 @@
         max-width: 50px;
         vertical-align: middle;
         border-radius: 50%;
-
       }
     </style>
     <!-- 所有留言模板 -->
 
     <script type="text/template" id="mesModule">
-      <div class="col-lg-6 col-lg-offset-3 unit" > 
+      <div class="col-lg-6 col-lg-offset-3 unit">
         <h3>
           <img src="{{= avatar }}" class="allAvatar" alt="">&nbsp;{{= username }}</h3>
         <p>{{= message }}</p>
@@ -279,16 +287,18 @@
       let compiled = _.template(mesModule);
 
       getBlog(1);
-      
+
 
       // 获取消息
       function getBlog(page) {
         let html = '';
 
-        $.get('/allBlog?page='+page, (data) => {
+        $.get('/allBlog?page=' + page, (data) => {
           if (data == "-1") {
             //未登录 不做任何事
-            $('#showAllBlog').append('<h3 class="text-center" style="color:#aaa;">请登录以查看消息.</h3>');
+            $('<h3 class="text-center" style="color:#aaa;">请登录以查看消息.</h3>').insertBefore($('#showAllBlog'));
+            $('#showAllBlog').hide();
+
             return;
           }
 

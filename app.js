@@ -2,7 +2,7 @@
  * @Author: touber 
  * @Date: 2018-05-09 14:34:27 
  * @Last Modified by: touber
- * @Last Modified time: 2018-05-09 14:35:37
+ * @Last Modified time: 2018-05-09 17:28:59
  */
 'use strict';
 
@@ -25,16 +25,16 @@ app.use('/avatar',express.static('./avatar'));
 
 
 // 路由
-app.get('/',router.showIndex);
-app.get('/regist',router.showRegist);
-app.post('/doRegist',router.doRegist);
-app.get('/login',router.showLogin);
-app.post('/doLogin',router.doLogin);
-app.get('/logout',router.doLogout);
-app.get('/uploadAvatar',router.showUploadAvatar);
-app.post('/doUploadAvatar',router.doUploadAvatar);
-app.get('/cutAvatar',router.showCutAvatar);
-app.post('/doCutAvatar',router.doCutAvatar);
+app.get('/',router.showIndex);                          //首页
+app.get('/regist',router.showRegist);                   //注册页面
+app.post('/doRegist',router.doRegist);                  //执行注册
+app.get('/login',router.showLogin);                     //登录页面 
+app.post('/doLogin',router.doLogin);                    //执行登录
+app.get('/logout',router.doLogout);                     //登出
+app.get('/uploadAvatar',router.showUploadAvatar);       //上传头像页面
+app.post('/doUploadAvatar',router.doUploadAvatar);      //执行头像上传
+app.get('/cutAvatar',router.showCutAvatar);             //头像裁剪页面
+app.post('/doCutAvatar',router.doCutAvatar);            //执行裁剪
 app.post('/doSendMes',router.doSendMes);                //发表
 app.get('/allBlog',router.getAllBlog);                  //获取所有blog,每页9个
 app.get('/userInfo',router.getUserInfo);                //获取用户信息
