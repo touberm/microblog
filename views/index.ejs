@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="/favicon.ico">
+
+
+  <title>MicroBlog</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="/css/global.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/underscore-noflect-min.js"></script>
+  <style>
+    .avatar {
+      max-width: 98%;
+      display: block;
+      border-radius: 2px;
+      overflow: hidden;
+      margin: 0 auto;
+      border-radius: 50%;
+
+    }
+
+    textarea {
+      resize: none;
+    }
+
+    .sendMes {
+      margin-top: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <% include header.ejs %>
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container">
+        <% if(login){ %>
+          <div class="row">
+            <div class="col-lg-2">
+              <a href="/uploadAvatar">
+                <img src="<%= avatar %>" class="avatar" alt="">
+              </a>
+              <p class="text-center username">
+                <%= username %>
+              </p>
+            </div>
+            <div class="col-lg-6 col-offset-1">
+              <textarea class="form-control message" name="message" rows="4"></textarea>
+              <button class="btn btn-success pull-right sendMes">发表</button>
+            </div>
+          </div>
+          <% }else{ %>
+            <div class="row">
+              <div class="col-lg-6">
+                <h1>欢迎！</h1>
+                <p>MicroBolg是用node.js搭建的留言系统，欢迎注册使用。</p>
+                <button class="btn btn-primary">注册</button>
+              </div>
+              <div class="col-lg-6">
+                <form>
+                  <legend>欢迎登录MicroBlog</legend>
+                  <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" name='username' class="form-control" id="username" placeholder="用户名,可以是英文、中文、字母、下划线">
+                  </div>
+                  <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" name='password' class="form-control" id="password" placeholder="密码至少为6位,可以是数字、字母、下划线">
+                  </div>
+
+                  <button type="button" class="btn btn-success doLogin">登录</button>
+                  <div class="alert alert-danger" role="alert" style="margin-top:20px;">提示信息</div>
+
+                </form>
+              </div>
+
+            </div>
+
+            <% } %>
+
+
+      </div>
+    </div>
+    <nav aria-label="Page navigation" class="text-center" id="pageContainer">
+      <ul class="pagination">
+        <li id="pagePrev">
+          <a href="javascript:void(0);" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <li>
+          <a href="javascript:void(0);" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <script>
+      // 分页
+      $.get('/amount', (data) => {
+        if (data == '-1') {
+          //未登录时隐藏整个模块
+          $('#pageContainer').hide();
+          return;
+        } else if (data == '-2') {
+          alert('获取blogAmount失败,请联系管理员');
+          return;
+        } else {
+          let amount = Math.ceil(parseInt(data) / 10); //获取分页页数
+          let html = '';
+          for (var i = 1; i <= amount; i++) {
+            html += ' <li class="pageNum"><a href="javascript:void(0);">' + i + '</a></li>'
+          }
+          $(html).insertAfter($('#pagePrev')); // 将html插入页面
+          $(".pageNum:first").addClass("active"); //给第一个添加class
+        }
+      })
+
+      // 点击切换  动态添加的元素  需要事件委托
+      $(document).on('click', '.pageNum', (e) => {
+        let that = e.target;
+        let index = $('.pageNum a').index(that); //获取点击的页面
+        getBlog(index+1);   //ajax切换数据
+        $('.pageNum').removeClass('active').eq(index).addClass('active');
+
+      })
+    </script>
+    <style>
+    #showAllBlog{
+      min-height: 1950px;
+    }
+    #showAllBlog .unit{
+      min-height: 185px;
+      margin-bottom: 10px;
+      background-color: #f9f9f9;
+      border-radius: 6px;
+    }
+    #showAllBlog .time{
+      font-size: 12px;
+      color:#ccc;
+    }
+    </style>
+    <div class="container">
+      <!-- Example row of columns -->
+      <div class="row" id="showAllBlog">
+      </div>
+
+      <hr>
+
+      <footer>
+        <p>&copy; 2016 Company, Inc.</p>
+      </footer>
+    </div>
+    <!-- /container -->
+
+    <style>
+      .allAvatar {
+        max-width: 50px;
+        vertical-align: middle;
+        border-radius: 50%;
+
+      }
+    </style>
+    <!-- 所有留言模板 -->
+
+    <script type="text/template" id="mesModule">
+      <div class="col-lg-6 col-lg-offset-3 unit" > 
+        <h3>
+          <img src="{{= avatar }}" class="allAvatar" alt="">&nbsp;{{= username }}</h3>
+        <p>{{= message }}</p>
+        <p class="text-right time">{{= time }}</p>
+        <p>
+          <a class="btn btn-default" href="javascript:void(0);" role="button">View details &raquo;</a>
+        </p>
+      </div>
+    </script>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+
+    <script>
+      $('#logout').on('click', (e) => {
+        $.get('/logout', (data) => {
+          if (data == '1') {
+            alert('登出成功');
+            location.reload();
+          } else {
+            alert('登出失败,请稍后再试');
+          }
+        })
+      })
+    </script>
+    <script>
+      $('.alert').hide();
+      $('.doLogin').on('click', (e) => {
+        let username = $("#username").val();
+        let password = $("#password").val();
+        //用户名正则，4到16位（字母，数字，下划线，减号,汉字） 2-8位纯汉字 4-16位纯字母数字 4-16位混合
+        var regName = /^[\u4E00-\u9FA5\.a-zA-Z0-9_-]{4,16}$|^[\u4E00-\u9FA5]{2,8}$|^[a-zA-Z0-9_-]{4,16}$/;
+        //密码正则，4到16位（字母，数字，下划线，减号）
+        let regPsw = /^[a-zA-Z0-9_-]{6,16}/;
+
+        if (regName.test(username) && regPsw.test(password)) {
+          $.post('/doLogin', {
+            "username": username,
+            "password": password
+          }, (data) => {
+            if (data == '1') {
+              setTimeout(() => { //立即跳转
+                location.href = '/';
+              }, 50);
+            } else if (data == '2') {
+              $('.alert').html('用户名不存在').fadeIn();
+              setTimeout(() => {
+                $('.alert').fadeOut();
+              }, 3000);
+            } else if (data == '-1') {
+              $('.alert').html('密码错误').fadeIn();
+              setTimeout(() => {
+                $('.alert').fadeOut();
+              }, 3000);
+            } else {
+              $('.alert').html('未知原因,登录失败,请联系客服').fadeIn();
+              setTimeout(() => {
+                $('.alert').fadeOut();
+              }, 3000);
+            }
+          })
+        } else {
+          if (!regName.test(username)) {
+            $('.alert').html('用户名格式不正确').fadeIn();
+            setTimeout(() => {
+              $('.alert').fadeOut();
+            }, 3000);
+          } else if (!regPsw.test(password)) {
+            $('.alert').html('密码格式不正确').fadeIn();
+            setTimeout(() => {
+              $('.alert').fadeOut();
+            }, 3000);
+          }
+        }
+
+      })
+
+      // 发表
+      $('.sendMes').on('click', () => {
+        let message = $('.message').val();
+        $.post('/doSendMes', {
+          "message": message
+        }, (r) => {
+          if (r == '1') {
+            alert('发表成功')
+          } else if (r == '-1') {
+            alert('发表失败，请联系管理员');
+          }
+        })
+      })
+    </script>
+    <script>
+      let mesModule = $('#mesModule').html();
+
+      let compiled = _.template(mesModule);
+
+      getBlog(1);
+      
+
+      // 获取消息
+      function getBlog(page) {
+        let html = '';
+
+        $.get('/allBlog?page='+page, (data) => {
+          if (data == "-1") {
+            //未登录 不做任何事
+            $('#showAllBlog').append('<h3 class="text-center" style="color:#aaa;">请登录以查看消息.</h3>');
+            return;
+          }
+
+          //先清空内容区
+          $('#showAllBlog').html("");
+
+          iterate(0);
+
+          function iterate(i) {
+
+            if (i == data.length) {
+              return;
+            }
+            $.get('/userInfo?username=' + data[i].username, (result) => {
+              html = compiled({
+                avatar: result[0].avatar,
+                username: data[i].username,
+                time: data[i].time,
+                message: data[i].message
+              })
+              $('#showAllBlog').append(html);
+              iterate(i + 1);
+            })
+          }
+          // 浏览器提示双层get不利于用户体验 因此改为迭代的方式
+          // for(var i=0 ; i<data.length;i++){
+          //   console.log(i);
+
+          //   $.get('/userInfo?username='+data[i].username,(result)=>{
+          //     console.log(result[0]);
+          //     html =  compiled({
+          //       avatar : result[0].avatar,
+          //       username : data[i].username,
+          //       time : data[i].time,
+          //       message : data[i].message
+          //     })
+          //     $('#showAllBlog').append(html);
+          //   })
+          // }
+        });
+
+      }
+    </script>
+</body>
+
+</>

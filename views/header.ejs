@@ -1,0 +1,40 @@
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <ul class="nav navbar-nav">
+      <li <% if(active == "login"){ %> class="index" <% } %> ><a href="javascript:void(0);">Micro Blog <span class="sr-only">(current)</span></a></li>
+      <li><a href="javascript:void(0);">All Blog</a></li>
+      <li><a href="javascript:void(0);">My Blog</a></li>
+      <li><a href="javascript:void(0);">Member List</a></li>
+      <li class="dropdown">
+        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a href="javascript:void(0);">Action</a></li>
+          <li><a href="javascript:void(0);">Another action</a></li>
+          <li><a href="javascript:void(0);">Something else here</a></li>
+          <li role="separator" class="divider"></li>
+          <li><a href="javascript:void(0);">Separated link</a></li>
+          <li role="separator" class="divider"></li>
+          <li><a href="javascript:void(0);">One more separated link</a></li>
+        </ul>
+      </li>
+    </ul>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <%
+          if(login){
+        %>
+        <li><a href="javascript:void(0);">欢迎，<%= username %></a></li>
+        <li <% if(active == "setting"){ %> class="active" <% } %> ><a href="javascript:void(0);">设置</a></li>
+        <li><a href="javascript:void(0);" id="logout">退出</a></li>
+        <%
+          }else{
+        %>
+        <li <% if(active == "login"){ %> class="active" <% } %> ><a href="/login">登录</a></li>
+        <li <% if(active == "regist"){ %> class="active" <% } %> ><a href="/regist">注册</a></li>
+        <% 
+          } 
+        %>
+      </ul>
+    </div><!--/.navbar-collapse -->
+  </div>
+</nav>

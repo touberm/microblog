@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="/favicon.ico">
+
+  <title>上传头像-MicroBlog</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="/css/global.css" rel="stylesheet">
+  <style>
+    legend {
+      padding-top: 60px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <% include header.ejs %>
+
+  <div class="container">
+    <div class="row">
+      <form class='col-lg-6 col-md-6' action="/doUploadAvatar" method="POST" enctype="multipart/form-data">
+        <legend>上传头像</legend>
+
+        <label for="avatar">选择文件</label>
+        <input type="file" name='avatar' class="" id="avatar" >
+        <br>
+        <button type="submit" class="btn btn-success">上传</button>
+        <div class="alert alert-danger" role="alert" style="margin-top:20px;">提示信息</div>
+
+      </form>
+    </div>
+    <footer>
+      <p>&copy; 2016 Company, Inc.</p>
+    </footer>
+
+
+
+  </div>
+
+
+  <!-- Bootstrap core JavaScript
+    ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script>
+    $('.alert').hide();
+  </script>
+</body>
+
+</html>
