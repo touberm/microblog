@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="/favicon.ico">
+
+
+  <title>成员列表-MicroBlog</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="/css/global.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/underscore-noflect-min.js"></script>
+  <style>
+    .username {
+      display: inline-block;
+    }
+
+    .avatar {
+      width: 50px;
+      border-radius: 50%;
+    }
+    .member,
+    .member:hover{
+      display: block;
+      text-decoration: none;
+      color:#333;
+    }
+  </style>
+</head>
+
+<body>
+
+  <% include header.ejs %>
+
+    <div class="page-header text-center">
+      <h1>
+        成员列表
+        <small> Member List</small>
+      </h1>
+    </div>
+    <div class="container">
+      <ul class="list-group">
+        <% for(var i=0;i<memberList.length;i++){%>
+          <li class="list-group-item">
+            <a href="" class="member">
+              <img src="<%= memberList[i].avatar %>" alt="" class="avatar">
+              <h3 class="username">&nbsp;
+                <%= memberList[i].username %>
+              </h3>
+            </a>
+          </li>
+
+          <% } %>
+      </ul>
+    </div>
+
+</body>

@@ -51,7 +51,7 @@
         <% if(login){ %>
           <div class="row">
             <div class="col-lg-2">
-              <a href="/uploadAvatar">
+              <a href="/homepage/<%= username %>">
                 <img src="<%= avatar %>" class="avatar" alt="">
               </a>
               <p class="text-center username">
@@ -172,7 +172,7 @@
       <hr>
 
       <footer>
-        <p>&copy; 2016 Company, Inc.</p>
+        <p>&copy; 2018 Company, Inc.</p>
       </footer>
     </div>
     <!-- /container -->
@@ -203,20 +203,10 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
 
-    <script>
-      $('#logout').on('click', (e) => {
-        $.get('/logout', (data) => {
-          if (data == '1') {
-            alert('登出成功');
-            location.reload();
-          } else {
-            alert('登出失败,请稍后再试');
-          }
-        })
-      })
-    </script>
+   
     <script>
       $('.alert').hide();
+      // 登录
       $('.doLogin').on('click', (e) => {
         let username = $("#username").val();
         let password = $("#password").val();
@@ -231,8 +221,8 @@
             "password": password
           }, (data) => {
             if (data == '1') {
-              setTimeout(() => { //立即跳转
-                location.href = '/';
+              setTimeout(() => { //立即跳转 到首页
+                location.href = '/homepage/'+username;
               }, 50);
             } else if (data == '2') {
               $('.alert').html('用户名不存在').fadeIn();
@@ -274,7 +264,8 @@
           "message": message
         }, (r) => {
           if (r == '1') {
-            alert('发表成功')
+            // 发表成功无提示;
+            // alert('发表成功'); 
           } else if (r == '-1') {
             alert('发表失败，请联系管理员');
           }
@@ -344,4 +335,3 @@
     </script>
 </body>
 
-</>

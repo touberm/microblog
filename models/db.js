@@ -4,8 +4,7 @@
 const MongoClient = require('mongodb').MongoClient;
 
 function __connectDB(dbName,callback){
-  const url = 'mongodb://localhost:27017';
-
+  const url = 'mongodb://127.0.0.1:27017';
   MongoClient.connect(url, function(err, client) {
     const db = client.db(dbName);
     callback(err,db,client);
@@ -88,12 +87,9 @@ exports.modify = (dbName,collectionName,json1,json2,callback)=>{
 // 获取总数
 exports.getCount = (dbName,collectionName,json,callback)=>{
   __connectDB(dbName,(err,db,client)=>{
-
     db.collection(collectionName).count(json,(err,r)=>{
       callback(err,r);
       client.close();
     });
-
-
   })
 }

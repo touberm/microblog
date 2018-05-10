@@ -281,6 +281,7 @@ exports.getUserInfo = (req,res)=>{
   })
 }
 
+// 获取消息总数
 exports.getAmount = (req,res)=>{
   // 判断是否登陆
   if(req.session.login != '1'){
@@ -297,4 +298,69 @@ exports.getAmount = (req,res)=>{
     res.send(r.toString());
 
   })
+}
+
+// 个人主页
+exports.showPersonal = (req,res)=>{
+  let personalName = req.params.username;
+  //读取个人信息 也可以在页面上用ajax获取
+  db.find('microblog','user',{"username":personalName},(err,r)=>{
+    if(err){
+      res.send('-4');//登录个人主页失败
+      return;
+    }
+    //读取该用户所有消息
+    db.find('microblog','message',{"username":personalName},{"sort":{"time":-1}},(err,personalBlog)=>{
+      if(err){
+        res.send('-5');//读取消息失败
+      }
+
+      res.render('homepage',{
+        "login": req.session.login == "1" ? true : false,
+        "username": req.session.username,
+        "active" : "-1",                      //header.ejs状态 ,如无则为-1
+        "avatar": r[0].avatar,
+        "personalName" : personalName,
+        "personalBlog" : personalBlog
+
+      })
+    })
+  })
+}
+
+// 成员列表
+exports.showMemberList = (req,res)=>{
+  db.find('microblog','user',{},(err,memberList)=>{
+    if(err){
+      res.send('-5');//获取成员类表失败
+      return;
+    }
+
+    res.render('memberList',{
+      "login": req.session.login == "1" ? true : false,
+      "username": req.session.username,
+      "active" : "memberList",                      //header.ejs状态 ,如无则为-1
+      "avatar": req.session.avatar,
+      "memberList" : memberList
+    })
+
+  })
+}
+
+exports.showAllBlog = (req,res)=>{
+   // 判断是否登陆
+  if(req.session.login != '1'){
+    res.send('-1');
+    return;
+  }
+  
+  // res.send('hi');
+  
+  res.render('allBlog',{
+    "login":  true,
+    "username": req.session.username,
+    "active" : "allBlog",                      //header.ejs状态 ,如无则为-1
+    "avatar": req.session.avatar
+  });
+    
 }

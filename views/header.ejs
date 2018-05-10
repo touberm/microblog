@@ -1,22 +1,12 @@
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container">
     <ul class="nav navbar-nav">
-      <li <% if(active == "login"){ %> class="index" <% } %> ><a href="javascript:void(0);">Micro Blog <span class="sr-only">(current)</span></a></li>
-      <li><a href="javascript:void(0);">All Blog</a></li>
-      <li><a href="javascript:void(0);">My Blog</a></li>
-      <li><a href="javascript:void(0);">Member List</a></li>
-      <li class="dropdown">
-        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-        <ul class="dropdown-menu">
-          <li><a href="javascript:void(0);">Action</a></li>
-          <li><a href="javascript:void(0);">Another action</a></li>
-          <li><a href="javascript:void(0);">Something else here</a></li>
-          <li role="separator" class="divider"></li>
-          <li><a href="javascript:void(0);">Separated link</a></li>
-          <li role="separator" class="divider"></li>
-          <li><a href="javascript:void(0);">One more separated link</a></li>
-        </ul>
-      </li>
+      <li  <% if(active == "index"){ %> class="active" <% } %> ><a href="/">Micro Blog <span class="sr-only">(current)</span></a></li>
+      <% if(login){ %>
+      <li <% if(active == "allBlog"){ %> class="active" <% } %> ><a href="/showAllBlog">All Blog</a></li>
+      <li <% if(active == "myBlog"){ %> class="active" <% } %> ><a href="/homepage/<%= username %>">My Blog</a></li>
+      <li <% if(active == "memberList"){ %> class="active" <% } %> ><a href="/memberList">Member List</a></li>
+      <% } %>
     </ul>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
@@ -25,7 +15,7 @@
         %>
         <li><a href="javascript:void(0);">欢迎，<%= username %></a></li>
         <li <% if(active == "setting"){ %> class="active" <% } %> ><a href="javascript:void(0);">设置</a></li>
-        <li><a href="javascript:void(0);" id="logout">退出</a></li>
+        <li><a href="javascript:void(0)" id="logout">退出</a></li>
         <%
           }else{
         %>
@@ -38,3 +28,17 @@
     </div><!--/.navbar-collapse -->
   </div>
 </nav>
+
+<script>
+  // 登出
+  $('#logout').on('click', (e) => {
+    $.get('/logout', (data) => {
+      if (data == '1') {
+        alert('登出成功');
+        location.href = '/';
+      } else {
+        alert('登出失败,请稍后再试');
+      }
+    })
+  })
+</script>

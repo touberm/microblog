@@ -2,7 +2,7 @@
  * @Author: touber 
  * @Date: 2018-05-09 14:34:27 
  * @Last Modified by: touber
- * @Last Modified time: 2018-05-09 17:28:59
+ * @Last Modified time: 2018-05-10 17:17:36
  */
 'use strict';
 
@@ -36,9 +36,12 @@ app.post('/doUploadAvatar',router.doUploadAvatar);      //执行头像上传
 app.get('/cutAvatar',router.showCutAvatar);             //头像裁剪页面
 app.post('/doCutAvatar',router.doCutAvatar);            //执行裁剪
 app.post('/doSendMes',router.doSendMes);                //发表
-app.get('/allBlog',router.getAllBlog);                  //获取所有blog,每页9个
+app.get('/allBlog',router.getAllBlog);                  //获取所有blog,每页10个
 app.get('/userInfo',router.getUserInfo);                //获取用户信息
 app.get('/amount',router.getAmount);                    //获取blog总数
+app.get('/homepage/:username',router.showPersonal);     //个人主页
+app.get('/memberList',router.showMemberList);           //成员列表
+app.get('/showAllBlog',router.showAllBlog);              //与获取所有blog调取同一个接口
 
 
-app.listen(3000);
+app.listen(3000,'0.0.0.0');

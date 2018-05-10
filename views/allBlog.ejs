@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="/favicon.ico">
+
+
+  <title>AllBlog-MicroBlog</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="/css/global.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/underscore-noflect-min.js"></script>
+  <style>
+    .avatar {
+      max-width: 98%;
+      display: block;
+      border-radius: 2px;
+      overflow: hidden;
+      margin: 0 auto;
+      border-radius: 50%;
+
+    }
+
+    textarea {
+      resize: none;
+    }
+
+    .sendMes {
+      margin-top: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <% include header.ejs %>
+  <nav aria-label="Page navigation" class="text-center" id="pageContainer">
+    <ul class="pagination">
+      <li id="pagePrev">
+        <a href="javascript:void(0);" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      <li>
+        <a href="javascript:void(0);" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <script>
+    // 分页
+    $.get('/amount', (data) => {
+      if (data == '-1') {
+        //未登录时隐藏整个模块
+        $('#pageContainer').hide();
+        return;
+      } else if (data == '-2') {
+        alert('获取blogAmount失败,请联系管理员');
+        return;
+      } else {
+        let amount = Math.ceil(parseInt(data) / 10); //获取分页页数
+        console.log(amount);
+        let html = '';
+        if (amount == 1 || amount == 0) {
+          $('#pageContainer').hide();
+          return; //只有一页时不显示分页 amount==0 为没有数据的时候
+        } else {
+          for (var i = 1; i <= amount; i++) {
+            html += ' <li class="pageNum"><a href="javascript:void(0);">' + i + '</a></li>'
+          }
+          $(html).insertAfter($('#pagePrev')); // 将html插入页面
+          $(".pageNum:first").addClass("active"); //给第一个添加class
+        }
+
+      }
+    })
+
+    // 点击切换  动态添加的元素  需要事件委托
+    $(document).on('click', '.pageNum', (e) => {
+      let that = e.target;
+      let index = $('.pageNum a').index(that); //获取点击的页面
+      getBlog(index + 1); //ajax切换数据
+      $('.pageNum').removeClass('active').eq(index).addClass('active');
+
+    })
+  </script>
+  <style>
+    #showAllBlog {
+      min-height: 1950px;
+    }
+
+    #showAllBlog .unit {
+      min-height: 185px;
+      margin-bottom: 10px;
+      background-color: #f9f9f9;
+      border-radius: 6px;
+    }
+
+    #showAllBlog .time {
+      font-size: 12px;
+      color: #ccc;
+    }
+  </style>
+  <div class="container">
+    <!-- Example row of columns -->
+    <div class="row" id="showAllBlog">
+    </div>
+
+    <hr>
+
+    <footer>
+      <p>&copy; 2018 Company, Inc.</p>
+    </footer>
+  </div>
+  <!-- /container -->
+
+  <style>
+    .allAvatar {
+      max-width: 50px;
+      vertical-align: middle;
+      border-radius: 50%;
+    }
+  </style>
+  <!-- 所有留言模板 -->
+
+  <script type="text/template" id="mesModule">
+    <div class="col-lg-6 col-lg-offset-3 unit">
+      <h3>
+        <img src="{{= avatar }}" class="allAvatar" alt="">&nbsp;{{= username }}</h3>
+      <p>{{= message }}</p>
+      <p class="text-right time">{{= time }}</p>
+      <p>
+        <a class="btn btn-default" href="javascript:void(0);" role="button">View details &raquo;</a>
+      </p>
+    </div>
+  </script>
+
+
+  <!-- Bootstrap core JavaScript
+  ================================================== -->
+  <script>
+    let mesModule = $('#mesModule').html();
+
+    let compiled = _.template(mesModule);
+
+    getBlog(1);
+
+
+    // 获取消息
+    function getBlog(page) {
+      let html = '';
+
+      $.get('/allBlog?page=' + page, (data) => {
+        if (data == "-1") {
+          //未登录 不做任何事
+          $('<h3 class="text-center" style="color:#aaa;">请登录以查看消息.</h3>').insertBefore($('#showAllBlog'));
+          $('#showAllBlog').hide();
+
+          return;
+        }
+
+        //先清空内容区
+        $('#showAllBlog').html("");
+
+        iterate(0);
+
+        function iterate(i) {
+
+          if (i == data.length) {
+            return;
+          }
+          $.get('/userInfo?username=' + data[i].username, (result) => {
+            html = compiled({
+              avatar: result[0].avatar,
+              username: data[i].username,
+              time: data[i].time,
+              message: data[i].message
+            })
+            $('#showAllBlog').append(html);
+            iterate(i + 1);
+          })
+        }
+        // 浏览器提示双层get不利于用户体验 因此改为迭代的方式
+        // for(var i=0 ; i<data.length;i++){
+        //   console.log(i);
+
+        //   $.get('/userInfo?username='+data[i].username,(result)=>{
+        //     console.log(result[0]);
+        //     html =  compiled({
+        //       avatar : result[0].avatar,
+        //       username : data[i].username,
+        //       time : data[i].time,
+        //       message : data[i].message
+        //     })
+        //     $('#showAllBlog').append(html);
+        //   })
+        // }
+      });
+
+    }
+  </script>
+</body>
+

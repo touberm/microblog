@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="/favicon.ico">
+
+
+  <title><%= personalName %>的个人主页</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="/css/global.css" rel="stylesheet">
+  <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="/js/underscore-noflect-min.js"></script>
+  <style>
+  .time{
+    font-size: 12px;
+    color:#ccc;
+  }
+  </style>
+</head>
+
+<body>
+
+  <% include header.ejs %>
+
+    <div class="page-header text-center">
+      <h1>
+        <%= personalName %>
+          <small> Personal Homepage</small>
+      </h1>
+    </div>
+    <div class="container">
+      <ul class="list-group">
+        <% for(var i=0;i<personalBlog.length;i++){%>
+        <li class="list-group-item">
+          <p><%= personalBlog[i].message %></p>
+          <p class="text-right time"><%= personalBlog[i].time %></p>
+          <p class="text-right time"><a href="" class="btn btn-xs btn-default text-right">查看详情</a></p>
+        </li>
+
+        <% } %>
+      </ul>
+    </div>
+
+</body>
